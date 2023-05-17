@@ -13,6 +13,9 @@ import os
 
 from pathlib import Path
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+]
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -67,7 +70,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # allow access from diffferent origin for web clients
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

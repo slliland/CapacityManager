@@ -13,8 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django import urls
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 
 from .api.views import index_view, UserViewSet, GroupViewSet, MessageViewSet
@@ -28,6 +29,8 @@ router.register('users', UserViewSet)
 router.register('groups', GroupViewSet)
 
 urlpatterns = [
+    path('api/getnewoption/', views.getnewoption, name="getnewoption"),
+
     # http://localhost:8000/
     path('', index_view, name='index'),
 
@@ -41,8 +44,8 @@ urlpatterns = [
 
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),
-    path('/generate-data/', views.generate_data, name='generate-data'),
-    path('api/csrf/', views.get_csrf, name='get_csrf'),
-    path('api/convert/', views.convert, name='convert'),
-    path('api/convert_to_uppercase/', convert_to_uppercase, name='convert_to_uppercase'),
+    # path('/generate-data/', views.generate_data, name='generate-data'),
+    # path('api/csrf/', views.get_csrf, name='get_csrf'),
+    # path('api/convert/', views.convert, name='convert'),
+    # path('api/convert_to_uppercase/', convert_to_uppercase, name='convert_to_uppercase'),
 ]
