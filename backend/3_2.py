@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import json
 
 import pandas as pd
 import statsmodels.api as sm
 import numpy as np
-import csv
+import json
 
 
-def capacity_management_algorithm_days(day, hour, duration):
+def capacity_management_algorithm_days(index, day, hour, duration):
     if duration <= 1:
         duration += 1
 
@@ -15,7 +14,7 @@ def capacity_management_algorithm_days(day, hour, duration):
     capacity_data = []
 
     def get_data(file_number, day, hour):
-        file_name = '3_2_' + str(file_number) + '.csv'
+        file_name = '32/' + '3_2_' + str(file_number) + '.csv'
         # 获取数据
         data = pd.read_csv(file_name)
 
@@ -37,10 +36,9 @@ def capacity_management_algorithm_days(day, hour, duration):
                 break
         return time, capacity
 
-    for i in range(5):
-        data = get_data(i + 1, day, hour)
-        time_data += data[0]
-        capacity_data += data[1]
+    data = get_data(index, day, hour)
+    time_data += data[0]
+    capacity_data += data[1]
 
     # 创建一个新的数据框, 并将时间序列数据和容量数据添加到其中
     data_frame = pd.DataFrame(
@@ -69,8 +67,8 @@ def capacity_management_algorithm_days(day, hour, duration):
     return predictions[0: duration]
 
 
-def get_predictions(day, hour, duration=10):
-    return capacity_management_algorithm_days(day, hour, duration)
+def get_predictions(index, day, hour, duration=10):
+    return capacity_management_algorithm_days(index, day, hour, duration)
 
 
 def get_upper_and_lower_bound(predictions):
@@ -95,6 +93,8 @@ upper_bounds = []
 lower_bounds = []
 predictions = []
 
+index = 1
+
 for day in days:
     for hour in hours:
         if day == '6' and int(hour) < 21:
@@ -103,7 +103,7 @@ for day in days:
         if day == '21' and int(hour) > 21:
             continue
 
-        p = get_predictions('2023/4/' + day, hour)
+        p = get_predictions(index, '2023/4/' + day, hour)
         dates.append('2023/4/' + day + ' ' + hour)
         bounds = get_upper_and_lower_bound(p)
         upper_bounds.append(float(bounds[0]))
@@ -113,10 +113,19 @@ for day in days:
 
 print('Begin to generate json file...')
 
+warning = 0
+# 获取当前值
+current = 10000000000000000000000
+if current > max(upper_bounds):
+    warning = 1
+if current < min(lower_bounds):
+    warning = -1
+
 data = {'date': dates,
         'upper_bound': upper_bounds,
         'lower_bound': lower_bounds,
-        'prediction': predictions
+        'prediction': predictions,
+        'warning': warning
         }
 
 with open('3_2_predictions.json', 'w') as file:

@@ -1,19 +1,42 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 import json
+from . import one
 
-def convert_to_uppercase(request):
-    if request.method == 'POST':
-        input_string = request.POST.get('inputString', '')
-        output_string = input_string.upper()
-        return HttpResponse({'outputString': output_string})
-    else:
-        return HttpResponse({'error': 'Invalid request method'})
 
-def getnewoption(request):
+def forecast(request,date,range_value,cluster):
     if request.method == "POST":
-        r_list = json.loads(request.body)  # 前端向后端发送的参数
-        # 对r_list进行操作，结果存入arr。以dict数据类型{'id': '', 'file': ''}格式存储，方便后续取用；
-        arr = [{'id': '1', 'file': '111'},{'id': '2', 'file': '4444'}]  # 后端返回前端的参数
-        return HttpResponse(json.dumps(arr, ensure_ascii=False), content_type='application/json', charset='utf-8')
+        input_data = json.loads(request.body)
+        date = input_data.get('date')
+        range_value = int(input_data.get('range_value'))
+        cluster = input_data.get('cluster')
+
+        result = one.get_input(date,range_value,cluster)
+
+
+        print(result)
+        return JsonResponse(result)
+
     else:
-        return HttpResponse({'error': 'Invalid request method'})
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+def forecast2(request,date,range_value,cluster):
+    if request.method == "POST":
+        input_data = json.loads(request.body)
+        date = input_data.get('date')
+        range_value = int(input_data.get('range_value'))
+        cluster = input_data.get('cluster')
+
+        result = {
+            'xArray': list(range(1, 11)),  # 从1到10的数组
+            'y1Array': list(range(10, 21)),  # 从10到20的数组
+            'y2Array': list(range(20, 31)),
+            'y3Array': list(range(30, 41))
+        }
+
+
+        print(result)
+        return JsonResponse(result)
+
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)

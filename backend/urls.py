@@ -21,7 +21,7 @@ from rest_framework import routers
 from .api.views import index_view, UserViewSet, GroupViewSet, MessageViewSet
 
 from . import views
-from .views import convert_to_uppercase
+
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
@@ -29,7 +29,9 @@ router.register('users', UserViewSet)
 router.register('groups', GroupViewSet)
 
 urlpatterns = [
-    path('api/getnewoption/', views.getnewoption, name="getnewoption"),
+
+    path('api/forecast/<str:date>/<int:range_value>/<int:cluster>', views.forecast, name='forecast'),
+    path('api/forecast2/<str:date>/<int:range_value>/<int:cluster>', views.forecast2, name='forecast2'),
 
     # http://localhost:8000/
     path('', index_view, name='index'),

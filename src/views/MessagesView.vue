@@ -1,5 +1,29 @@
 <template>
-  <div class="echart" id="mychart" :style="myChartStyle"></div>
+  <div>
+    
+    <div class="echart" id="mychart" :style="myChartStyle"></div>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th>日期</th>
+        <th>预测上界</th>
+        <th>预测值</th>
+        <th>预测下界</th>
+        <th>是否超出容量</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      <tr v-for="(item, index) in tableData" :key="index">
+        <td>{{ item.x }}</td>
+        <td>{{ item.y1 }}</td>
+        <td>{{ item.y2 }}</td>
+        <td>{{ item.y3 }}</td>
+        <td>{{ item.warn }}</td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -14,7 +38,9 @@ export default {
       y1Data: [],
       y2Data: [],
       y3Data: [],
-      myChartStyle: { float: "left", width: "100%", height: "400px" } //图表样式
+      warnData:[],
+      myChartStyle: { float: "left", width: "100%", height: "400px" }, //图表样式
+      tableData: [],
     };
   },
   mounted() {
@@ -23,6 +49,17 @@ export default {
       this.y1Data = response.data.y1Data;
       this.y2Data = response.data.y2Data;
       this.y3Data = response.data.y3Data;
+      this.warnData = response.data.warn
+
+      // 构造表格数据，将 x、y1、y2、y3 和 warn 数据组合为对象
+      this.tableData = this.xData.map((x, index) => ({
+        x: x,
+        y1: this.y1Data[index],
+        y2: this.y2Data[index],
+        y3: this.y3Data[index],
+        warn: this.warnData[index] // 可根据需要添加适当的列数据
+      }));
+
       this.initEcharts();
     }).catch(error => {
       console.log(error);
@@ -93,3 +130,4 @@ export default {
   }
 };
 </script>
+
